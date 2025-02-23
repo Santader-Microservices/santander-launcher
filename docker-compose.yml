@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+
+  nats-service:
+    image: nats:latest
+    ports:
+      - "8222:8222"
+     
+  client-gateway:
+    build: ./client-gateway
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:3000
+    volumes:
+      - ./client-gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+      - NATS_SERVERS=nats://nats-service:4222
+  users-ms:
+    depends_on:
+      - users-db
+    build: ./user-ms
+    volumes:
+      - ./user-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3001
+      - NATS_SERVERS=nats://nats-service:4222
+      - DATABASE_URL=postgresql://postgres:12345678@users-db:5432/usersdb?schema=public
+  users-db:
+    container_name: user_database
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./user-ms/postgres:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_DB=usersdb
