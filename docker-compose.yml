@@ -29,11 +29,11 @@ services:
       - NATS_SERVERS=nats://nats-service:4222
       - DATABASE_URL=postgresql://postgres:12345678@users-db:5432/usersdb?schema=public
   users-db:
-    container_name: user_database
+    container_name: users_database
     image: postgres:16.2
     restart: always
     volumes:
-      - ./user-ms/postgres:/var/lib/postgresql/data
+      - ./users-ms/postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
     environment:
