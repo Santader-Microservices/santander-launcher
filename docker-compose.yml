@@ -20,9 +20,9 @@ services:
   users-ms:
     depends_on:
       - users-db
-    build: ./user-ms
+    build: ./users-ms
     volumes:
-      - ./user-ms/src:/usr/src/app/src
+      - ./users-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
       - PORT=3001
